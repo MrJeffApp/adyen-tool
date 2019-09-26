@@ -93,7 +93,9 @@
 
                     const checkout = new AdyenCheckout(configuration);
 
-                    const card = checkout.create("card").mount("#card-component");
+                    const card = checkout.create("card", {
+                      enableStoreDetails: true
+                    }).mount("#card-component");
 
                     $("#cardForm").toggleClass("d-none");
                     $("#showForm").toggleClass("d-none");
