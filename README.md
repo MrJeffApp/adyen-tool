@@ -1,2 +1,2 @@
 # adyen-tool
-Adyen card token generator: https://mrjeffapp.github.io/mercadopago-tool/
+Adyen card token generator: [https://mrjeffapp.github.io/adyen-tool](https://mrjeffapp.github.io/adyen-tool/)
