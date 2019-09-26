@@ -1,0 +1,111 @@
+<!DOCTYPE html>
+<html lang="en">
+    <head>
+        <meta charset="UTF-8">
+        <meta name="viewport" content="width=device-width, initial-scale=1, shrink-to-fit=no">
+        <link rel="shortcut icon" type="image/x-icon" href="favicon.ico">
+        <title>Mr Jeff | Adyen tool</title>
+        <link rel="stylesheet" href="https://stackpath.bootstrapcdn.com/bootstrap/4.1.3/css/bootstrap.min.css" integrity="sha384-MCw98/SFnGE8fJT3GXwEOngsV7Zt27NXFoaoApmYm81iuXoPkFOJwJ8ERdknLPMO" crossorigin="anonymous">
+        <link rel="stylesheet" href="https://checkoutshopper-live.adyen.com/checkoutshopper/sdk/3.1.0/adyen.css" />
+        <style>
+
+            .title {
+                padding: 20px 20px;
+            }
+
+            .tool {
+                width: 100%;
+                max-width: 350px;
+                padding: 15px;
+                margin: auto;
+            }
+        </style>
+    </head>
+    <body>
+        <div class="">
+            <div class="title">
+                <h1 class="h3 text-center">Adyen encrypted data generator</h1>
+            </div>
+            <form id="showForm" class="tool">
+                <div class="form-group">
+                    <label for="inputToken">Adyen origin key:</label>
+                    <input id="inputToken" class="form-control" placeholder="Adyen origin key">
+                </div>
+                <button class="btn btn-primary btn-block" type="submit">Show credit card form</button>
+            </form>
+            <div id="cardForm" class="tool d-none">
+              <div id="card-component"></div>
+            </div>
+            <form id="tokenForm" class="tool d-none">
+                <div class="form-group">
+                    <label for="encryptedCardNumber">Encrypted Card Number:</label>
+                    <input type="text" id="encryptedCardNumber" class="form-control" readonly/>
+                </div>
+                <div class="form-group">
+                    <label for="encryptedExpiryMonth">Encrypted Expiry Month:</label>
+                    <input type="text" id="encryptedExpiryMonth" class="form-control" readonly/>
+                </div>
+                <div class="form-group">
+                    <label for="encryptedExpiryYear">Encrypted Expiry Year:</label>
+                    <input type="text" id="encryptedExpiryYear" class="form-control" readonly/>
+                </div>
+                <div class="form-group">
+                    <label for="encryptedSecurityCode">Encrypted Security Code:</label>
+                    <input type="text" id="encryptedSecurityCode" class="form-control" readonly/>
+                </div>
+            </form>
+        </div>
+        <script src="https://code.jquery.com/jquery-3.3.1.slim.min.js" integrity="sha384-q8i/X+965DzO0rT7abK41JStQIAqVgRVzpbzo5smXKp4YfRvH+8abtTE1Pi6jizo" crossorigin="anonymous"></script>
+        <script src="https://stackpath.bootstrapcdn.com/bootstrap/4.1.3/js/bootstrap.min.js" integrity="sha384-ChfqqxuZUCnJSK3+MXmPNIyE6ZbWh2IMqE241rYiqJxyMiZ6OW/JmZQ5stwEULTy" crossorigin="anonymous"></script>
+        <script src="https://checkoutshopper-live.adyen.com/checkoutshopper/sdk/3.1.0/adyen.js"></script>
+        <script type="text/javascript">
+
+          function handleOnChange(state, component) {
+            console.log("On change");
+            console.log(state.isValid);
+            console.log(state.data.paymentMethod);
+
+            if (state.isValid) {
+              $("#tokenForm").removeClass("d-none");
+              $("#encryptedCardNumber").val(state.data.paymentMethod.encryptedCardNumber);
+              $("#encryptedExpiryMonth").val(state.data.paymentMethod.encryptedExpiryMonth);
+              $("#encryptedExpiryYear").val(state.data.paymentMethod.encryptedExpiryYear);
+              $("#encryptedSecurityCode").val(state.data.paymentMethod.encryptedSecurityCode);
+            } else {
+              $("#tokenForm").addClass("d-none");
+            }
+          }
+
+
+            $(function() {
+                console.log("Tool ready");
+                $("#showForm").submit(function( event ) {
+                    event.preventDefault();
+                    const originKey = $("#inputToken").val();
+                    console.log("Origin key: " + originKey);
+
+                    const configuration = {
+                        locale: "en_US",
+                        environment: "test",
+                        originKey: originKey,
+                        onChange: handleOnChange,
+                    };
+
+                    const checkout = new AdyenCheckout(configuration);
+
+                    const card = checkout.create("card").mount("#card-component");
+
+                    $("#cardForm").toggleClass("d-none");
+                    $("#showForm").toggleClass("d-none");
+                });
+
+                $("#tokenForm").submit(function( event ) {
+                    event.preventDefault();
+                    $("#tokenForm").toggleClass("d-none");
+                    $("#showForm").toggleClass("d-none");
+                });
+
+            });
+        </script>
+    </body>
+</html>
